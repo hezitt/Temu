@@ -31,3 +31,7 @@ def generate_sku(
     frame_code = "F" if framed else "U"
     size_code = build_size_code(width_cm, height_cm)
     return f"PBN-{factory_design_code}-{size_code}-{colors_count}-{frame_code}"
+
+
+def generate_spu_item_code(factory_design_code: str) -> str:
+    return f"PBN-{factory_design_code}"

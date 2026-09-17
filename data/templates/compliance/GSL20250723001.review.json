@@ -1,0 +1,48 @@
+{
+  "review_status": "SUPPORTING_EU_SDS_NOT_PRIMARY_FOR_US",
+  "document_type": "SDS",
+  "source_path": "data/raw/compliance/GSL20250723001.pdf",
+  "sha256": "318041bbdfad747fde40772c5a3995da17812371c03b34ffc4cd216ec34b39bb",
+  "report_number": "GSL20250723001",
+  "issue_date": "2025-07-25",
+  "revision_date": "2025-07-25",
+  "version": "1.0",
+  "applicant": "SHANGQIU LINGDIAN HANDICRAFTS CO., LTD.",
+  "manufacturer_supplier": "Shangqiu Lingdian Handicrafts Co., Ltd.",
+  "product_name": "PAINTING PIGMENT (3ML)",
+  "identified_use": "Consumer uses, painting",
+  "physical_state": "Paste",
+  "regulatory_basis_stated_in_document": [
+    "Regulation (EC) No 1907/2006",
+    "Regulation (EU) No 2020/878",
+    "Regulation (EC) No 1272/2008"
+  ],
+  "classification_stated_in_document": {
+    "classification": "Carc. 2",
+    "hazard_statement": "H351 Suspected of causing cancer",
+    "signal_word": "Warning",
+    "pictogram": "GHS08",
+    "label_component": "Titanium dioxide"
+  },
+  "transport_stated_in_document": {
+    "adr_rid": "Not regulated",
+    "imdg": "Not regulated",
+    "iata_dgr": "Not regulated",
+    "marine_pollutant": false
+  },
+  "document_limitations": [
+    "The report states that sample identity and information were supplied by the customer.",
+    "The report states that a chemical safety assessment has not been carried out.",
+    "The summary expressly states EU REACH/CLP preparation; it is not evidence by itself of complete U.S. consumer art-material compliance.",
+    "The document does not prove that the exact paint pots packed with this listing are the tested/reviewed product."
+  ],
+  "required_follow_up": [
+    "Confirm in writing that this exact 3 ml paint formulation is used for every SKU in the listing.",
+    "Obtain the U.S.-market art-material toxicological review and labeling basis applicable to the final consumer package.",
+    "Confirm the correct Temu sensitive-goods attribute; the SDS states the physical state is Paste.",
+    "Keep the complete 20-page PDF unchanged and linked to the product evidence record."
+  ],
+  "product_linkage_confirmed": false,
+  "approved_for_publish": false,
+  "superseded_for_us_listing_by": "EFHZ26046551-CG-02"
+}

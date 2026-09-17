@@ -1,0 +1,141 @@
+{
+  "status": "SUBMITTED_PENDING_REVIEW_WITH_EXTERNAL_IDS",
+  "store_mode": "SEMI_MANAGED",
+  "marketplace": "US",
+  "publishing_system": "DIANXIAOMI",
+  "fulfillment_system": "FANGGUO",
+  "category_path": "艺术品、工艺品和缝纫用品>绘画用品>绘画用品>数字画套件>成人数字画套件",
+  "positioning": "成人数字油画",
+  "identifiers": {
+    "factory_design_code": "LD000001",
+    "internal_spu_item_code": "PBN-LD000001",
+    "dianxiaomi_spu": "5569462031",
+    "temu_spu": null,
+    "temu_goods_id": null
+  },
+  "external_identifiers_observed_in_dianxiaomi": {
+    "spu_id": "5569462031",
+    "skc_id": "54471877244",
+    "temu_seller_center_confirmation_pending": true,
+    "sku_mappings": [
+      {
+        "sku_item_code": "PBN-LD000001-3040-24-F",
+        "sku_id": "35894215932"
+      },
+      {
+        "sku_item_code": "PBN-LD000001-4050-24-F",
+        "sku_id": "38745519632"
+      },
+      {
+        "sku_item_code": "PBN-LD000001-3040-24-U",
+        "sku_id": "10832717802"
+      },
+      {
+        "sku_item_code": "PBN-LD000001-4050-24-U",
+        "sku_id": "64561517268"
+      }
+    ]
+  },
+  "submission": {
+    "channel": "DIANXIAOMI_MANUAL",
+    "review_status": "PENDING",
+    "images_uploaded_to_dianxiaomi": true,
+    "lifecycle_displayed": "--",
+    "title_displayed": "Minimalist Paint by Number - Paint by Number Kit Adult | DIY Oil Painting | DIY Kit - Wall Decor -Christmas Gift",
+    "brand_displayed": "CanvasMellow"
+  },
+  "proposed_content": {
+    "title_zh": "复古收音机与绿植成人数字油画套装",
+    "title_en": "Retro Radio and Potted Plant Paint by Numbers Kit for Adults, DIY Canvas Wall Art",
+    "style_tags": ["简约风", "复古/怀旧"],
+    "theme_tags": ["静物", "植物", "音乐"],
+    "material": "油画布",
+    "origin_country": "中国大陆",
+    "origin_province": "河南省",
+    "manufacturing_regions": ["中国大陆"]
+  },
+  "known_variants": [
+    {"width_cm": 30, "height_cm": 40, "colors_count": 24, "framed": true},
+    {"width_cm": 40, "height_cm": 50, "colors_count": 24, "framed": true},
+    {"width_cm": 30, "height_cm": 40, "colors_count": 24, "framed": false},
+    {"width_cm": 40, "height_cm": 50, "colors_count": 24, "framed": false}
+  ],
+  "candidate_product_facts": {
+    "colors_count": 24,
+    "colors_count_basis": "The U.S. SDS composition enumerates 24 named paint colors; confirm that this exact kit uses that formulation.",
+    "sensitive_attributes": ["膏体"],
+    "sensitive_attribute_basis": "The U.S. SDS states Physical state: Paste."
+  },
+  "source_assets": [
+    {
+      "path": "data/raw/listings/first_product/7053049033484831bc932513203bd63b-goods.jpeg",
+      "sha256": "959842ff4ec45fecb97e83480eb123acccaf5d689d595bc317db2c273d046279",
+      "role": "MAIN_IMAGE_CANDIDATE",
+      "width_px": 800,
+      "height_px": 800,
+      "size_bytes": 72192,
+      "review": "Shows the correct radio-and-plant artwork, but also shows a frame. Confirm the sold frame type."
+    },
+    {
+      "path": "data/raw/listings/first_product/5c6eb5bc62334aa7b2e0025480e54b2b-goods.jpeg",
+      "sha256": "ed3738dec536098a716c28d8efdb1fb789ff6c23d1b4eb8c49aa9cb1c3e02159",
+      "role": "LIFESTYLE",
+      "width_px": 800,
+      "height_px": 800,
+      "size_bytes": 113051,
+      "review": "Correct artwork in a framed room scene; can misrepresent an unframed SKU."
+    },
+    {
+      "path": "data/raw/listings/first_product/6f0b8da756ba4948a297a03005133cd0-goods.jpeg",
+      "sha256": "f1cbd528578fa16b5d31d59cebd91d7823040b5993dd35aff77a4849b1c5185e",
+      "role": "LIFESTYLE",
+      "width_px": 800,
+      "height_px": 800,
+      "size_bytes": 138686,
+      "review": "Correct artwork in a framed room scene; can misrepresent an unframed SKU."
+    },
+    {
+      "path": "data/raw/listings/first_product/8710b354-2570-4962-8ef6-c6ac2b0e8406.jpg",
+      "sha256": "6f12aec0147b6b119d3b836866bf00550155bb4b38695baa377df6b5d1b9c430",
+      "role": "SIZE_GUIDE",
+      "width_px": 800,
+      "height_px": 800,
+      "size_bytes": 45731,
+      "review": "Supports 30x40 cm and 40x50 cm variants."
+    },
+    {
+      "path": "data/raw/listings/first_product/c3e6b6e1a62145289877ccf6be18e381-goods.jpeg",
+      "sha256": "6dffdc91dee2a6800dc4a8d4c1b3f7e14200b12d1cec4f3b01f0b3f6b0ac2aec",
+      "role": "GENERIC_TECHNIQUE_EXAMPLE",
+      "width_px": 800,
+      "height_px": 800,
+      "size_bytes": 233485,
+      "review": "Shows a different coastal design. Do not publish as a product-specific progress image."
+    },
+    {
+      "path": "data/raw/listings/first_product/eac3eccb1eb74e819b6ee25b9e98c6f3-goods.jpeg",
+      "sha256": "9be223963b1b889b964463310a81b0ffd72356fb2070d1bc9a9d61587cab085c",
+      "role": "KIT_CONTENTS",
+      "width_px": 800,
+      "height_px": 800,
+      "size_bytes": 182788,
+      "review": "Shows wooden stretcher bars. Use only if the selected SKU actually includes them."
+    }
+  ],
+  "compliance_manifest": "data/templates/compliance/EFHZ26046551-CG-02.review.json",
+  "supporting_compliance_manifest": "data/templates/compliance/GSL20250723001.review.json",
+  "blocking_fields": [
+    "declared_price_cny_by_variant",
+    "warehouse_inventory_by_variant",
+    "dianxiaomi_material_references_for_automation",
+    "artwork_and_image_commercial_rights_confirmation",
+    "exact_paint_to_sds_linkage_confirmation",
+    "factory_line_art_and_instruction_files",
+    "temu_review_result_and_seller_center_confirmation"
+  ],
+  "auto_resolved_after_variant_confirmation": [
+    "package_dimensions_by_variant",
+    "package_weight_by_variant",
+    "max_units_per_box"
+  ]
+}

@@ -7,7 +7,11 @@ from integrations.fangguo.naming import (
     build_material_names,
     validate_material_pair,
 )
-from modules.listing.sku_generator import InvalidSKUComponentError, generate_sku
+from modules.listing.sku_generator import (
+    InvalidSKUComponentError,
+    generate_sku,
+    generate_spu_item_code,
+)
 
 
 def test_factory_material_names_follow_fangguo_pairing_rule() -> None:
@@ -32,3 +36,7 @@ def test_sku_generation_is_deterministic_and_encodes_variant() -> None:
 def test_sku_generation_rejects_fractional_dimensions_in_v1() -> None:
     with pytest.raises(InvalidSKUComponentError):
         generate_sku("CAT000001", Decimal("40.5"), Decimal("50"), 24, False)
+
+
+def test_spu_item_code_is_stable_across_variants() -> None:
+    assert generate_spu_item_code("CAT000001") == "PBN-CAT000001"

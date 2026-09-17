@@ -1,0 +1,67 @@
+{
+  "review_status": "US_SDS_REVIEWED_LHAMA_EVIDENCE_STILL_REQUIRED",
+  "document_type": "SDS",
+  "jurisdiction": "US",
+  "source_files": [
+    {
+      "path": "data/raw/compliance/EFHZ26046551-CG-02-cover.pdf",
+      "sha256": "85cf7abcacc7897d619e4a84a814f5cad241b8d1441c42973d2432f9c7343741",
+      "pages": 1
+    },
+    {
+      "path": "data/raw/compliance/EFHZ26046551-CG-02-body.pdf",
+      "sha256": "6e50bfd7ec12cba2006cffac5acb42fe126b2600c70330fa53dbce97432b7eea",
+      "pages": 15
+    }
+  ],
+  "report_number": "EFHZ26046551-CG-02",
+  "compilation_date": "2026-05-13",
+  "printing_date": "2026-05-13",
+  "version": "1.0",
+  "issuer": "Eurofins Product Testing Service (Hangzhou) Co., Ltd.",
+  "applicant_responsible_party": "Shangqiu Lingdian Arts and Crafts Co., Ltd.",
+  "product_name": "Paint by numbers kit",
+  "recommended_use": "Consumer uses, paint",
+  "regulatory_basis_stated_in_document": "OSHA 29 CFR 1910.1200(g)",
+  "classification_stated_in_document": {
+    "osha_2024_hazard_communication": "Not classified",
+    "signal_word": null,
+    "hazard_symbols": [],
+    "hazard_statements": []
+  },
+  "composition_summary": {
+    "named_paint_colors": 24,
+    "physical_state": "Paste",
+    "titanium_dioxide_present": true
+  },
+  "transport_stated_in_document": {
+    "dot": "Not regulated",
+    "imdg": "Not regulated",
+    "iata_dgr": "Not regulated",
+    "marine_pollutant": false
+  },
+  "us_regulatory_notes_stated_in_document": [
+    "Titanium dioxide is listed under California Proposition 65 only for airborne, unbound particles of respirable size.",
+    "No ingredients are listed under SARA Section 355 or Section 313.",
+    "The listed ingredients are identified as TSCA-listed in Section 15."
+  ],
+  "relationship_to_eu_sds": {
+    "supporting_report": "GSL20250723001",
+    "note": "The U.S. and EU documents apply different jurisdictional classification rules. Preserve both; do not merge their hazard labels."
+  },
+  "document_limitations": [
+    "This is an OSHA-format SDS, not an ASTM D-4236 toxicologist conformance statement for consumer art-material labeling.",
+    "The report identifies a generic paint by numbers kit and does not identify the listing design or SKU.",
+    "The report does not provide a lead test result or other product-specific consumer certificate.",
+    "The final page states that the test item was subcontracted to another lab."
+  ],
+  "required_follow_up": [
+    "Obtain the toxicologist review evidence and final package labeling statement required for U.S. consumer art materials, including the applicable ASTM D-4236 conformance wording.",
+    "Confirm in writing that the 24-color paint formulation in this report is the formulation packed with the selected listing SKUs.",
+    "Confirm the final package warning and California labeling decision with the responsible compliance reviewer.",
+    "Keep both source PDFs together because the cover carries the report request/summary and the body carries the 16-section SDS."
+  ],
+  "product_linkage_confirmed": false,
+  "astm_d4236_toxicologist_review_confirmed": false,
+  "approved_for_publish": false
+}

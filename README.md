@@ -2,7 +2,7 @@
 
 这是 Temu 美国跨境数字油画业务的数据库优先基础工程。当前已完成 **STEP 1、Milestone 1、Milestone 1.5**，并完成 **Milestone 2 的商品领域模型、预检报告和真实模板适配器**。工厂报价、包装规则和重量规则均可追溯写入 PostgreSQL；Listing 只从有效报价生成 SKU。
 
-由于尚未提供真实 Temu 商品批量上传模板，本轮不会猜 Temu 字段，也不会生成伪造的正式上传文件。没有实现 Temu API 自动上架、定价/议价、方果自动下单、备货、标签 PDF 或 Finance Dashboard。
+已接入真实 Temu 美国站半托管成人数字画套件模板，并将店小秘固定为唯一商品发布方、方果固定为唯一订单履约和发货回传方。首个商品仍处于预检阶段；缺少的业务事实不会由系统猜测，因此当前不会生成可上传工作簿。尚未实现 Temu API 自动上架、定价/议价、方果自动下单、备货、标签 PDF 或 Finance Dashboard。
 
 ## 当前能力
 
@@ -19,9 +19,11 @@
 - 线稿费作为 Design 一次性成本，不进入 SKU 永久单件变动成本
 - 从配置读取 4 USD 平均运费；人工汇率与时间戳缺失时阻止完整成本提交
 - 解析工厂 DOCX/XLS：36 条包装规则、82 条重量规则，来源哈希可追踪
-- `PBN-{factory_design_code}-{size}-{colors}-{U/F}` 确定性 SKU 编码
+- `PBN-{factory_design_code}` 统一 SPU 货号与 `PBN-{factory_design_code}-{size}-{colors}-{U/F}` 确定性 SKU 编码
+- Listing 依据尺寸、色数和框型自动解析工厂包装三边、重量、每箱上限及来源哈希
 - Listing pre-flight 校验与 `summary/products/skus/issues` 四表报告
-- 真实 Temu 模板 + 审核后的字段映射才能生成正式工作簿；dry-run 永不生成正式上传文件
+- 已审核真实 Temu 模板的 83 列映射和 `spu`/`sku` 分层行结构；dry-run 永不生成正式上传文件
+- 美国 SDS 与欧盟 SDS 分开留档，且美国 SDS 不被误当作 ASTM D-4236 消费品标签证明
 
 ## 快速开始
 
@@ -180,4 +182,4 @@ tests/                   单元测试与可选 PostgreSQL 集成测试
 
 ## 当前阻塞与下一步
 
-正式 `temu_batch_listing.xlsx` 仍需：真实 Temu 美国站目标类目的批量上传模板、审核后的字段/枚举映射、真实主图，以及带时间戳的人工 USD/CNY 汇率。补齐后先运行 dry-run，预检无 ERROR 才允许 commit。下一阶段仍需单独确认后才能进入方果订单、备货、标签、Pricing Engine 或 Temu API。
+真实 Temu 模板、字段映射、美国 SDS、包装说明和重量表已经接入。首个商品生成正式 `temu_batch_listing.xlsx` 前仍需：工厂图案编码；每个 SKU 的色数与框型确认；申报价格和领典仓库存；合规尺寸且已上传素材中心的图片 ID/URL；图案/图片商用权；当前颜料与美国 SDS 的书面对应；ASTM D-4236 毒理审核及最终包装标签证据；方果同码线稿与说明书文件；带时间戳的人工 USD/CNY 汇率。补齐后先运行 dry-run，预检无 ERROR 才允许 commit。下一阶段仍需单独确认后才能进入方果订单、备货、标签、Pricing Engine 或 Temu API。
