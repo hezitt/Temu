@@ -1,0 +1,1 @@
+"""Product-master module placeholder."""

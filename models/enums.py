@@ -1,0 +1,156 @@
+from enum import StrEnum
+
+
+class StringEnum(StrEnum):
+    pass
+
+
+class ImportType(StringEnum):
+    FACTORY_QUOTE = "FACTORY_QUOTE"
+    PRODUCT_MASTER = "PRODUCT_MASTER"
+    TEMU_LISTING = "TEMU_LISTING"
+    PRICING_QUOTE = "PRICING_QUOTE"
+    STOCK_ORDER = "STOCK_ORDER"
+    LABEL = "LABEL"
+    FINANCE = "FINANCE"
+
+
+class ImportStatus(StringEnum):
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    COMPLETED_WITH_ERRORS = "COMPLETED_WITH_ERRORS"
+    FAILED = "FAILED"
+
+
+class ValidationStatus(StringEnum):
+    PENDING = "PENDING"
+    VALID = "VALID"
+    MANUAL_REVIEW = "MANUAL_REVIEW"
+    INVALID = "INVALID"
+
+
+class ImportRowStatus(StringEnum):
+    VALID = "VALID"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+    SKIPPED = "SKIPPED"
+
+
+class CostCompletenessStatus(StringEnum):
+    COMPLETE = "COMPLETE"
+    INCOMPLETE = "INCOMPLETE"
+    UNKNOWN = "UNKNOWN"
+
+
+class ShippingCostType(StringEnum):
+    ESTIMATED_AVERAGE = "ESTIMATED_AVERAGE"
+    CALCULATED = "CALCULATED"
+    ACTUAL = "ACTUAL"
+
+
+class ExchangeRateSource(StringEnum):
+    MANUAL_CONFIG = "MANUAL_CONFIG"
+
+
+class LabelServiceCostStatus(StringEnum):
+    CONFIRMED = "CONFIRMED"
+    UNKNOWN = "UNKNOWN"
+
+
+class VariantType(StringEnum):
+    UNFRAMED = "UNFRAMED"
+    FRAMED = "FRAMED"
+
+
+class ProductStatus(StringEnum):
+    DRAFT = "DRAFT"
+    READY = "READY"
+    LISTED = "LISTED"
+    INACTIVE = "INACTIVE"
+    ARCHIVED = "ARCHIVED"
+
+
+class ListingStatus(StringEnum):
+    DRAFT = "DRAFT"
+    SUBMITTED = "SUBMITTED"
+    ACTIVE = "ACTIVE"
+    REJECTED = "REJECTED"
+    INACTIVE = "INACTIVE"
+    UNKNOWN = "UNKNOWN"
+
+
+class QuoteSource(StringEnum):
+    API = "API"
+    EXCEL = "EXCEL"
+    MANUAL = "MANUAL"
+    BROWSER = "BROWSER"
+
+
+class PricingDecisionType(StringEnum):
+    ACCEPT = "ACCEPT"
+    NEGOTIATE = "NEGOTIATE"
+    REJECT = "REJECT"
+    MANUAL_REVIEW = "MANUAL_REVIEW"
+
+
+class ExecutionStatus(StringEnum):
+    NOT_REQUESTED = "NOT_REQUESTED"
+    PENDING = "PENDING"
+    SUCCEEDED = "SUCCEEDED"
+    FAILED = "FAILED"
+    SKIPPED_DRY_RUN = "SKIPPED_DRY_RUN"
+
+
+class StockOrderStatus(StringEnum):
+    IMPORTED = "IMPORTED"
+    MATCHING = "MATCHING"
+    WAITING_LABEL = "WAITING_LABEL"
+    VALIDATION_FAILED = "VALIDATION_FAILED"
+    READY_FOR_SUPPLIER = "READY_FOR_SUPPLIER"
+    PRINTED = "PRINTED"
+    READY_FOR_SHIPMENT = "READY_FOR_SHIPMENT"
+    SHIPPED = "SHIPPED"
+    CANCELLED = "CANCELLED"
+
+
+class LabelType(StringEnum):
+    PRODUCT_BARCODE = "PRODUCT_BARCODE"
+    SKU_LABEL = "SKU_LABEL"
+    TEMU_PRODUCT_LABEL = "TEMU_PRODUCT_LABEL"
+    CARTON_LABEL = "CARTON_LABEL"
+    COMPLIANCE_LABEL = "COMPLIANCE_LABEL"
+    OTHER = "OTHER"
+
+
+class LabelStatus(StringEnum):
+    WAITING_LABEL = "WAITING_LABEL"
+    READY = "READY"
+    PRINTED = "PRINTED"
+    ERROR = "ERROR"
+
+
+class ShipmentStatus(StringEnum):
+    READY_FOR_SHIPMENT = "READY_FOR_SHIPMENT"
+    SHIPPED = "SHIPPED"
+    DELIVERED = "DELIVERED"
+    EXCEPTION = "EXCEPTION"
+
+
+class FinancialTransactionType(StringEnum):
+    REVENUE = "REVENUE"
+    SETTLEMENT_INCOME = "SETTLEMENT_INCOME"
+    FACTORY_COST = "FACTORY_COST"
+    CUSTOMIZATION_COST = "CUSTOMIZATION_COST"
+    PACKAGING_COST = "PACKAGING_COST"
+    SHIPPING_COST = "SHIPPING_COST"
+    LABEL_COST = "LABEL_COST"
+    REFUND = "REFUND"
+    OTHER_COST = "OTHER_COST"
+
+
+class AuditStatus(StringEnum):
+    PENDING = "PENDING"
+    SUCCEEDED = "SUCCEEDED"
+    FAILED = "FAILED"
+    SKIPPED_DRY_RUN = "SKIPPED_DRY_RUN"

@@ -1,0 +1,18 @@
+{
+  "designs": [
+    {
+      "design_id": "DESIGN-CAT-000001",
+      "factory_design_code": "CAT000001",
+      "title_base": "Cat Portrait",
+      "theme": "Animals",
+      "main_image": "/replace/with/real/CAT000001.jpg",
+      "additional_images": [],
+      "available_variants": [
+        {"width_cm": "30", "height_cm": "40", "colors_count": 24, "framed": false},
+        {"width_cm": "40", "height_cm": "50", "colors_count": 24, "framed": false}
+      ],
+      "product_type": "PAINT_BY_NUMBERS",
+      "target_market": "US"
+    }
+  ]
+}

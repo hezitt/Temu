@@ -1,0 +1,55 @@
+app_name: Temu PBN Automation
+environment: development
+log_level: INFO
+
+pricing:
+  target_margin: 0.35
+  min_margin: 0.30
+  default_currency: CNY
+  require_dry_run: true
+
+imports:
+  factory_quote_currency: CNY
+  unavailable_markers:
+    - "/"
+    - "-"
+    - "N/A"
+  zero_price_is_invalid: true
+
+factory_quotes:
+  product_type: PAINT_BY_NUMBERS
+  allowed_color_counts:
+    - 16
+    - 24
+    - 36
+    - 48
+    - 60
+  suspicious_low_ratio: 0.60
+  size_inversion_ratio: 0.90
+  color_inversion_ratio: 0.90
+
+costing:
+  estimated_shipping_cost_usd: 4.00
+  exchange_rate_source: MANUAL_CONFIG
+  label_service_cost_cny: 0.00
+  label_service_cost_status: CONFIRMED
+
+listing:
+  product_type: PAINT_BY_NUMBERS
+  target_market: US
+  require_existing_main_image: true
+
+supplier_profiles:
+  LINGDIAN:
+    name: 领典
+    currency: CNY
+    country_code: US
+    timezone: America/Los_Angeles
+
+reports:
+  node_executable: node
+
+paths:
+  raw_data_dir: data/raw
+  processed_data_dir: data/processed
+  output_dir: outputs
