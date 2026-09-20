@@ -1,14 +1,14 @@
 # Temu 数字油画自动化系统
 
-这是 Temu 美国跨境数字油画业务的数据库优先基础工程。当前已完成 **STEP 1、Milestone 1、Milestone 1.5**，并完成 **Milestone 2 的商品领域模型、预检报告和真实模板适配器**。工厂报价、包装规则和重量规则均可追溯写入 PostgreSQL；Listing 只从有效报价生成 SKU。
+这是 Temu 美国跨境数字油画业务的数据库优先基础工程。当前已完成 **STEP 1、Milestone 1、Milestone 1.5**，并完成 **Milestone 2 的商品领域模型、预检报告和真实模板适配器**。工厂报价、包装规则和重量规则均可追溯写入 PostgreSQL；Listing 只从有效报价生成 SKU。数据库已经加入 Temu 自研应用与方果接口所需的店铺、授权连接、同步、事件、素材和发布任务基础表。
 
-已接入真实 Temu 美国站半托管成人数字画套件模板，并将店小秘固定为唯一商品发布方、方果固定为唯一订单履约和发货回传方。首个商品已通过店小秘人工提交、正在审核；店小秘页面显示的 SPU/SKC/SKU ID 已作为“待 Temu 卖家中心确认”的外部标识录入文件。尚未实现 Temu API 自动上架、定价/议价、方果自动下单、备货、标签 PDF 或 Finance Dashboard。
+已接入真实 Temu 美国站半托管成人数字画套件模板。自研应用获批前，店小秘仍是唯一商品发布方，方果仍是唯一订单履约和发货回传方；自研商品应用验证通过后，商品写入责任将从店小秘切换到本系统。首个商品已通过店小秘人工提交、正在审核；店小秘页面显示的 SPU/SKC/SKU ID 已作为“待 Temu 卖家中心确认”的外部标识录入文件。尚未实现 Temu API 自动上架、定价/议价、方果自动下单、备货、标签 PDF 或 Finance Dashboard。
 
 ## 当前能力
 
 - Python 3.12 + FastAPI 基础应用与无数据库依赖的 `/health` 探针
 - PostgreSQL + SQLAlchemy 2 异步连接配置
-- Alembic 首次迁移，创建 16 张业务与支撑表
+- Alembic 版本化迁移，当前创建 26 张业务与支撑表
 - `.env` 覆盖 `settings.yaml` 的分层配置
 - 毛利阈值作为配置和可版本化数据库规则保存，不写死在业务逻辑中
 - UUID 内部主键、稳定业务编码、外键、唯一约束与关键数值约束
@@ -25,6 +25,10 @@
 - 已审核真实 Temu 模板的 83 列映射和 `spu`/`sku` 分层行结构；dry-run 永不生成正式上传文件
 - 同一 SPU 支持“型号（with frame/no frame）+ 尺码”两个 SKU 规格维度；SPU 层框架类型仍要求人工确认，系统不从其中一个 SKU 猜测
 - 店小秘人工发布结果可按店铺同步至 `temu_listings`，分别保存店小秘 SPU、Temu SPU、SKC、SKU ID 和审核状态；默认 dry-run、重复执行幂等
+- `stores` 和 `integration_connections` 分离店铺与外部授权；数据库只保存密钥引用、权限和到期时间，不保存明文 token
+- 同步游标、运行记录、平台事件均具备幂等键、状态和失败信息，可安全重试
+- Temu 素材上传与商品发布任务分别保存平台文件 ID、请求快照和执行结果
+- `/health/database` 独立检查 PostgreSQL 连接，避免把进程存活误当成数据库健康
 - 美国 SDS 与欧盟 SDS 分开留档，且美国 SDS 不被误当作 ASTM D-4236 消费品标签证明
 
 ## 快速开始
@@ -33,13 +37,14 @@
 
 ```bash
 cp .env.example .env
+# 修改 .env 中的本地数据库密码，并同步修改 DATABASE_URL 中的密码。
 make setup
 docker compose up -d postgres
 make upgrade
 make run
 ```
 
-访问 `http://127.0.0.1:8000/health` 检查应用进程。`/health` 不代表数据库已经连通；数据库迁移成功才表示数据库配置可用。
+访问 `http://127.0.0.1:8000/health` 检查应用进程，访问 `http://127.0.0.1:8000/health/database` 检查数据库连接。PostgreSQL 仅绑定 `127.0.0.1`，不会通过 Docker 端口暴露到局域网。
 
 常用命令：
 
@@ -77,8 +82,19 @@ python scripts/import_factory_quote.py \
 python scripts/import_fulfillment_rules.py \
   --packaging-docx "/path/to/领典美区数字油画装盒打包标准说明9.10.docx" \
   --weight-xls "/path/to/领典-美西数字油画工厂重量表 - 9.10.xls" \
+    --dry-run
+```
+
+商品 intake 主数据同样先预检再提交。它会幂等写入 Design、Product、SKU，并为每个 SKU 绑定当前有效工厂报价：
+
+```bash
+python scripts/import_product_intake.py \
+  --intake data/templates/first_product.intake.json \
+  --supplier LINGDIAN \
   --dry-run
 ```
+
+确认预检结果后改为 `--commit`，再运行店小秘外部 ID 同步。未配置人工汇率时会保留 4 USD 运费和工厂报价来源，但不会虚构完整人民币单件成本。
 
 Listing dry-run：
 
@@ -138,6 +154,16 @@ python scripts/sync_dianxiaomi_listing.py \
 - `import_batches`：来源文件哈希、批次状态、成功/失败行数和错误报告。
 - `pricing_rule_sets`：可版本化的毛利阈值与独立议价策略配置。
 - `audit_logs`：所有自动动作、dry-run、前后数据、结果和关联 ID。
+
+接口自动化基础表：
+
+- `stores`：店铺、站点、跨境/本土类型与半托管模式。
+- `integration_connections`：Temu、方果等授权连接；只保存 `credential_reference` 和 token 指纹。
+- `integration_sync_cursors`：按连接和资源保存增量同步游标与水位时间。
+- `integration_runs`：每次同步的方向、幂等键、计数、状态和错误。
+- `platform_events`：Temu 回调事件收件箱，按外部事件 ID 去重。
+- `platform_assets`：图片、SDS、说明书等文件的本地哈希和平台文件 ID。
+- `listing_submissions`：商品创建、修改、状态同步和库存更新任务。
 
 完整关系图和主外键说明见 [数据库 ER 关系](docs/database-er.md)。
 

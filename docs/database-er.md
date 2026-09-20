@@ -8,10 +8,23 @@ erDiagram
     SUPPLIERS ||--o{ FACTORY_COSTS : quotes
     SUPPLIERS ||--o{ STOCK_ORDERS : fulfills
 
+    STORES ||--o{ INTEGRATION_CONNECTIONS : authorizes
+    INTEGRATION_CONNECTIONS ||--o{ INTEGRATION_SYNC_CURSORS : checkpoints
+    INTEGRATION_CONNECTIONS ||--o{ INTEGRATION_RUNS : executes
+    INTEGRATION_CONNECTIONS ||--o{ PLATFORM_EVENTS : receives
+    INTEGRATION_CONNECTIONS ||--o{ PLATFORM_ASSETS : uploads
+    INTEGRATION_CONNECTIONS ||--o{ LISTING_SUBMISSIONS : publishes
+
     DESIGNS ||--o| PRODUCTS : defines
     PRODUCTS ||--o{ SKUS : contains
     SKUS o|--o{ FACTORY_COSTS : may_match
     SKUS ||--o{ TEMU_LISTINGS : listed_as
+    PRODUCTS ||--o{ LISTING_SUBMISSIONS : submitted_as
+    SKUS o|--o{ LISTING_SUBMISSIONS : targets
+    TEMU_LISTINGS o|--o{ LISTING_SUBMISSIONS : updates
+    DESIGNS o|--o{ PLATFORM_ASSETS : owns
+    PRODUCTS o|--o{ PLATFORM_ASSETS : owns
+    SKUS o|--o{ PLATFORM_ASSETS : owns
 
     IMPORT_BATCHES o|--o{ FACTORY_COSTS : imports
     IMPORT_BATCHES o|--o{ PRICING_QUOTES : imports
@@ -92,3 +105,11 @@ Design.design_code
 ## READY 状态的业务约束
 
 “全部 SKU 已匹配、Design ID 完整、必需标签齐全、打印数量正确、供应商 Excel 与打印包已生成”涉及跨表聚合，不适合只依赖单行 CHECK 约束。后续 Stock Order Service 必须在同一事务中验证这些条件并更新 `stock_orders.status`，同时写入 `audit_logs`。数据库字段已经为该流程预留状态和文件路径。
+
+## 接口凭据与幂等
+
+- `integration_connections.credential_reference` 只能保存环境变量名或密钥管理器路径，不能保存实际 token 或 app secret。
+- token 指纹、权限清单、授权时间和到期时间用于核对授权状态，不用于还原凭据。
+- `integration_runs.idempotency_key` 和 `listing_submissions.idempotency_key` 全局唯一，防止重试造成重复发布或重复写入。
+- `platform_events` 按连接和外部事件 ID 唯一；只有处理成功后才能推进对应同步游标。
+- 请求与响应快照写库前必须移除凭据、收件人联系方式等敏感字段。

@@ -2,13 +2,13 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: temu_pbn
-      POSTGRES_USER: temu_pbn
-      POSTGRES_PASSWORD: change-me
+      POSTGRES_DB: ${POSTGRES_DB:-temu_pbn}
+      POSTGRES_USER: ${POSTGRES_USER:-temu_pbn}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U temu_pbn -d temu_pbn"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -17,4 +17,3 @@ services:
 
 volumes:
   postgres_data:
-

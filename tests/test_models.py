@@ -16,6 +16,13 @@ REQUIRED_TABLES = {
     "audit_logs",
     "packaging_rules",
     "product_weight_rules",
+    "stores",
+    "integration_connections",
+    "integration_sync_cursors",
+    "integration_runs",
+    "platform_events",
+    "platform_assets",
+    "listing_submissions",
 }
 
 
@@ -65,3 +72,24 @@ def test_temu_listing_tracks_store_scoped_external_identifiers() -> None:
     } <= set(table.c.keys())
     constraints = {constraint.name for constraint in table.constraints if constraint.name}
     assert "uq_temu_listings_store_temu_sku_id" in constraints
+
+
+def test_integration_tables_enforce_idempotency_and_no_plaintext_secret_column() -> None:
+    connection_columns = set(Base.metadata.tables["integration_connections"].c.keys())
+    assert "credential_reference" in connection_columns
+    assert "access_token" not in connection_columns
+    assert "app_secret" not in connection_columns
+
+    run_key = Base.metadata.tables["integration_runs"].c.idempotency_key
+    submission_key = Base.metadata.tables["listing_submissions"].c.idempotency_key
+    assert run_key.unique is True
+    assert submission_key.unique is True
+
+
+def test_platform_events_are_deduplicated_per_connection() -> None:
+    constraints = {
+        constraint.name
+        for constraint in Base.metadata.tables["platform_events"].constraints
+        if constraint.name
+    }
+    assert "uq_platform_events_connection_external_event" in constraints

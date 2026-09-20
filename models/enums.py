@@ -154,3 +154,65 @@ class AuditStatus(StringEnum):
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
     SKIPPED_DRY_RUN = "SKIPPED_DRY_RUN"
+
+
+class IntegrationProvider(StringEnum):
+    TEMU = "TEMU"
+    FANGGUO = "FANGGUO"
+    DIANXIAOMI = "DIANXIAOMI"
+
+
+class IntegrationConnectionStatus(StringEnum):
+    PENDING_AUTHORIZATION = "PENDING_AUTHORIZATION"
+    ACTIVE = "ACTIVE"
+    EXPIRED = "EXPIRED"
+    REVOKED = "REVOKED"
+    ERROR = "ERROR"
+    DISABLED = "DISABLED"
+
+
+class IntegrationDirection(StringEnum):
+    INBOUND = "INBOUND"
+    OUTBOUND = "OUTBOUND"
+
+
+class IntegrationRunStatus(StringEnum):
+    PENDING = "PENDING"
+    RUNNING = "RUNNING"
+    SUCCEEDED = "SUCCEEDED"
+    PARTIAL = "PARTIAL"
+    FAILED = "FAILED"
+    SKIPPED = "SKIPPED"
+
+
+class IntegrationEventStatus(StringEnum):
+    RECEIVED = "RECEIVED"
+    PROCESSING = "PROCESSING"
+    PROCESSED = "PROCESSED"
+    FAILED = "FAILED"
+    IGNORED = "IGNORED"
+
+
+class PlatformAssetStatus(StringEnum):
+    PENDING = "PENDING"
+    UPLOADING = "UPLOADING"
+    READY = "READY"
+    FAILED = "FAILED"
+    EXPIRED = "EXPIRED"
+
+
+class ListingSubmissionAction(StringEnum):
+    CREATE = "CREATE"
+    UPDATE = "UPDATE"
+    STATUS_SYNC = "STATUS_SYNC"
+    INVENTORY_UPDATE = "INVENTORY_UPDATE"
+    COMPLIANCE_UPDATE = "COMPLIANCE_UPDATE"
+
+
+class ListingSubmissionStatus(StringEnum):
+    PENDING = "PENDING"
+    RUNNING = "RUNNING"
+    SUCCEEDED = "SUCCEEDED"
+    FAILED = "FAILED"
+    MANUAL_REVIEW = "MANUAL_REVIEW"
+    SKIPPED_DRY_RUN = "SKIPPED_DRY_RUN"
