@@ -195,6 +195,108 @@ def test_template_adapter_writes_one_spu_row_before_sku_rows(tmp_path: Path) -> 
     assert loaded["Upload"]["E4"].value == "40x50cm"
 
 
+def test_template_adapter_writes_frame_and_size_as_two_sku_specs(tmp_path: Path) -> None:
+    template = tmp_path / "temu-two-spec-template.xlsx"
+    workbook = Workbook()
+    sheet = workbook.worksheets[0]
+    sheet.title = "Upload"
+    headers = ["Level", "SKU", "Type 1", "Value 1", "Type 2", "Value 2", "SPU frame"]
+    for column, header in enumerate(headers, start=1):
+        sheet.cell(row=1, column=column, value=header)
+    workbook.save(template)
+    mapping = tmp_path / "mapping.json"
+    mapping.write_text(
+        json.dumps(
+            {
+                "platform": "TEMU_TEST_FIXTURE",
+                "template_sha256": hashlib.sha256(template.read_bytes()).hexdigest(),
+                "sheet_name": "Upload",
+                "header_row": 1,
+                "first_data_row": 2,
+                "row_strategy": "spu_with_sku_rows",
+                "columns": {
+                    "title": "A",
+                    "sku": "B",
+                    "width_cm": "D",
+                    "height_cm": "D",
+                    "colors_count": "D",
+                    "framed": "D",
+                    "main_image": "D",
+                },
+                "spu_columns": {
+                    "level": {"column": "A", "value": "spu"},
+                    "spu_frame_type": {
+                        "column": "G",
+                        "source": "spu_frame_type",
+                        "transform": "spu_frame_type",
+                    },
+                },
+                "sku_columns": {
+                    "level": {"column": "A", "value": "sku"},
+                    "sku": {"column": "B", "source": "sku"},
+                    "spec_type_1": {"column": "C", "value": "型号"},
+                    "spec_value_1": {"column": "D", "transform": "frame_variant_label"},
+                    "spec_type_2": {"column": "E", "value": "尺码"},
+                    "spec_value_2": {"column": "F", "transform": "size_label"},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    base = {
+        "design_id": "DESIGN-LD000001",
+        "factory_design_code": "LD000001",
+        "spu_item_code": "PBN-LD000001",
+        "title": "Minimalist Paint by Numbers Kit",
+        "title_zh": "简约成人数字油画套装",
+        "theme": "Still life",
+        "product_type": "PAINT_BY_NUMBERS",
+        "target_market": "US",
+        "main_image": "/tmp/LD000001.jpg",
+        "additional_images": "",
+        "origin_country": "中国大陆",
+        "material": "油画布",
+        "spu_frame_type": "有框",
+        "colors_count": 24,
+        "factory_cost_cny": Decimal("58"),
+        "shipping_cost_usd": Decimal("4"),
+        "unit_variable_cost_cny": Decimal("85"),
+    }
+    rows = [
+        CanonicalListingRow(
+            **base,
+            sku="PBN-LD000001-3040-24-F",
+            width_cm=Decimal("30"),
+            height_cm=Decimal("40"),
+            framed=True,
+        ),
+        CanonicalListingRow(
+            **base,
+            sku="PBN-LD000001-4050-24-U",
+            width_cm=Decimal("40"),
+            height_cm=Decimal("50"),
+            framed=False,
+        ),
+    ]
+    output = tmp_path / "filled.xlsx"
+    TemuExcelTemplateAdapter(ReportSettings(), Path.cwd()).export(
+        template_path=template,
+        mapping_path=mapping,
+        rows=rows,
+        output_path=output,
+        allow_test_fixture=True,
+    )
+
+    loaded = load_workbook(output, data_only=False)
+    assert loaded["Upload"]["G2"].value == "有框"
+    assert loaded["Upload"]["C3"].value == "型号"
+    assert loaded["Upload"]["D3"].value == "with frame"
+    assert loaded["Upload"]["E3"].value == "尺码"
+    assert loaded["Upload"]["F3"].value == "30x40cm"
+    assert loaded["Upload"]["D4"].value == "no frame"
+    assert loaded["Upload"]["F4"].value == "40x50cm"
+
+
 def test_semi_managed_preflight_blocks_unapproved_compliance_and_rights(
     tmp_path: Path,
 ) -> None:
@@ -253,3 +355,78 @@ def test_semi_managed_preflight_blocks_unapproved_compliance_and_rights(
 
     assert "ASSET_RIGHTS_UNCONFIRMED" in codes
     assert "COMPLIANCE_NOT_APPROVED" in codes
+
+
+def test_semi_managed_preflight_allows_mixed_frame_variants_with_spu_attribute(
+    tmp_path: Path,
+) -> None:
+    image = tmp_path / "image.png"
+    image.write_bytes(b"\x89PNG\r\n\x1a\n" + b"\x00" * 8 + (900).to_bytes(4, "big") * 2)
+    compliance = tmp_path / "compliance.json"
+    compliance.write_text(
+        json.dumps(
+            {
+                "jurisdiction": "US",
+                "product_linkage_confirmed": True,
+                "astm_d4236_toxicologist_review_confirmed": True,
+                "approved_for_publish": True,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    def sku(code: str, *, framed: bool) -> ListingSKU:
+        return ListingSKU(
+            factory_sku=code,
+            width_cm=Decimal("30" if framed else "40"),
+            height_cm=Decimal("40" if framed else "50"),
+            colors_count=24,
+            framed=framed,
+            sku_image_ref=f"TEMU_{code}",
+            declared_price_cny=Decimal("159" if framed else "135"),
+            warehouse_inventory=50,
+            package_length_cm=Decimal("43" if framed else "55"),
+            package_width_cm=Decimal("31" if framed else "8"),
+            package_height_cm=Decimal("4" if framed else "5.5"),
+            package_weight_g=Decimal("528" if framed else "399"),
+            factory_cost=None,
+            shipping_cost=None,
+            unit_cost=None,
+        )
+
+    product = ListingProduct(
+        design_id="DESIGN-LD000001",
+        factory_design_code="LD000001",
+        title="Minimalist Paint by Numbers Kit",
+        title_zh="简约成人数字油画套装",
+        theme="Still life",
+        main_image=image,
+        additional_images=[],
+        publish_image_refs=["ASSET_1", "ASSET_2", "ASSET_3"],
+        sensitive_attributes=["膏体"],
+        asset_rights_confirmed=True,
+        compliance_manifest=compliance,
+        spu_frame_type="有框",
+        product_type="PAINT_BY_NUMBERS",
+        target_market="US",
+        skus=[
+            sku("PBN-LD000001-3040-24-F", framed=True),
+            sku("PBN-LD000001-4050-24-U", framed=False),
+        ],
+    )
+    adapter = TemuExcelTemplateAdapter(ReportSettings(), Path.cwd())
+    mapping = {"row_strategy": "spu_with_sku_rows", "profile": {}}
+
+    codes = {
+        issue.code
+        for issue in adapter.validate_listing(ListingBatch(products=[product]), mapping)
+    }
+    assert "MIXED_SPU_FRAME_TYPES" not in codes
+    assert "MISSING_SPU_FRAME_TYPE_ATTRIBUTE" not in codes
+
+    product.spu_frame_type = None
+    missing_codes = {
+        issue.code
+        for issue in adapter.validate_listing(ListingBatch(products=[product]), mapping)
+    }
+    assert "MISSING_SPU_FRAME_TYPE_ATTRIBUTE" in missing_codes

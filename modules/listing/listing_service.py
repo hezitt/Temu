@@ -173,6 +173,7 @@ class ListingService:
                     origin_province=design.origin_province,
                     manufacturing_regions=design.manufacturing_regions,
                     material=design.material,
+                    spu_frame_type=design.spu_frame_type,
                     asset_rights_confirmed=design.asset_rights_confirmed,
                     compliance_manifest=design.compliance_manifest,
                     product_type=design.product_type,

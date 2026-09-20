@@ -6,6 +6,10 @@
   "fulfillment_system": "FANGGUO",
   "category_path": "艺术品、工艺品和缝纫用品>绘画用品>绘画用品>数字画套件>成人数字画套件",
   "positioning": "成人数字油画",
+  "pricing_targets": {
+    "minimum_gross_margin": 0.4,
+    "estimated_shipping_cost_usd_per_unit": 4.0
+  },
   "identifiers": {
     "factory_design_code": "LD000001",
     "internal_spu_item_code": "PBN-LD000001",
@@ -52,7 +56,8 @@
     "material": "油画布",
     "origin_country": "中国大陆",
     "origin_province": "河南省",
-    "manufacturing_regions": ["中国大陆"]
+    "manufacturing_regions": ["中国大陆"],
+    "spu_frame_type": null
   },
   "known_variants": [
     {"width_cm": 30, "height_cm": 40, "colors_count": 24, "framed": true},
@@ -131,6 +136,7 @@
     "artwork_and_image_commercial_rights_confirmation",
     "exact_paint_to_sds_linkage_confirmation",
     "factory_line_art_and_instruction_files",
+    "spu_frame_type_attribute_confirmation",
     "temu_review_result_and_seller_center_confirmation"
   ],
   "auto_resolved_after_variant_confirmation": [

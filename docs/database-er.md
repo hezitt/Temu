@@ -56,8 +56,8 @@ erDiagram
 ```text
 Design.design_code
 → Product.internal_product_code
-→ SKU.factory_sku / SKU.temu_sku
-→ TemuListing.temu_spu / temu_goods_id
+→ SKU.factory_sku
+→ TemuListing.dianxiaomi_spu_id / temu_spu / temu_skc_id / temu_sku_id / temu_goods_id
 → PricingQuote / PricingDecision
 → StockOrderItem
 → Label / Shipment / FinancialTransaction
@@ -77,10 +77,11 @@ Design.design_code
 - `design_code` 全局唯一。
 - `factory_design_code` 与内部 `design_code` 分开保存并唯一；历史记录允许暂为空，新 Listing 必须通过非空和字符校验。
 - `line_art_cost` 是 Design 一次性成本；SKU 的 `unit_variable_cost_cny` 只记录工厂产品成本与运费换算结果。
-- Factory SKU 在供应商内唯一；Temu SKU 在 V1 范围内唯一。
+- Factory SKU 在供应商内唯一；外部 Temu SKU ID 在同一店铺内唯一。
 - 同一供应商、图案、尺寸、色数、带框状态只允许一个 SKU。
 - 工厂报价按供应商、色数、标准化尺寸、带框状态和生效日唯一。
-- 同一店铺和 SKU 只有一个 Temu listing；Goods ID 在店铺内唯一。
+- 同一店铺和内部 SKU 只有一个 Temu listing；外部 Temu SKU ID 与 Goods ID 在店铺内唯一。
+- 店小秘 SPU ID 与经卖家中心确认的 Temu SPU 分字段保存；来源、观察时间、审核状态及原始载荷一并留档。
 - 同一规则代码和版本唯一，决策保存使用时的规则与数值快照。
 - 同一备货单行号唯一；未匹配行保留 `source_temu_sku` 并允许稳定外键为空。
 - 同一备货明细、标签类型和版本唯一。

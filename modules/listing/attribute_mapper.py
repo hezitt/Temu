@@ -24,6 +24,7 @@ def to_canonical_row(product: ListingProduct, sku: ListingSKU) -> CanonicalListi
         origin_province=product.origin_province,
         manufacturing_regions=product.manufacturing_regions,
         material=product.material,
+        spu_frame_type=product.spu_frame_type,
         sku=sku.factory_sku,
         width_cm=sku.width_cm,
         height_cm=sku.height_cm,

@@ -93,6 +93,11 @@ function resolveValue(record, spec) {
       return value;
     case "frame_type":
       return value === true ? "有框" : value === false ? "无框" : null;
+    case "spu_frame_type":
+      if (typeof value === "string" && value.trim()) return value.trim();
+      return record.framed === true ? "有框" : record.framed === false ? "无框" : null;
+    case "frame_variant_label":
+      return record.framed === true ? "with frame" : record.framed === false ? "no frame" : null;
     case "size_label":
       return `${record.width_cm}x${record.height_cm}cm`;
     case "paint_color_bucket":

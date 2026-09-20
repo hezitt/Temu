@@ -16,6 +16,9 @@ class TemuListing(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __table_args__ = (
         UniqueConstraint("store_code", "sku_id", name="uq_temu_listings_store_sku"),
         UniqueConstraint("store_code", "temu_goods_id", name="uq_temu_listings_store_goods"),
+        UniqueConstraint(
+            "store_code", "temu_sku_id", name="uq_temu_listings_store_temu_sku_id"
+        ),
         UniqueConstraint("store_code", "temu_spu", "sku_id", name="uq_temu_listings_store_spu_sku"),
         UniqueConstraint("id", "sku_id", name="uq_temu_listings_id_sku_id"),
     )
@@ -25,8 +28,15 @@ class TemuListing(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
     store_code: Mapped[str] = mapped_column(String(64), index=True)
     marketplace: Mapped[str] = mapped_column(String(16), default="US", server_default="US")
+    dianxiaomi_spu_id: Mapped[str | None] = mapped_column(String(128), index=True)
     temu_spu: Mapped[str | None] = mapped_column(String(128), index=True)
+    temu_skc_id: Mapped[str | None] = mapped_column(String(128), index=True)
+    temu_sku_id: Mapped[str | None] = mapped_column(String(128), index=True)
     temu_goods_id: Mapped[str | None] = mapped_column(String(128), index=True)
+    platform_review_status: Mapped[str | None] = mapped_column(String(32), index=True)
+    platform_lifecycle_status: Mapped[str | None] = mapped_column(String(64))
+    external_id_source: Mapped[str | None] = mapped_column(String(32))
+    external_id_observed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     status: Mapped[ListingStatus] = mapped_column(
         string_enum(ListingStatus, "listing_status"),
         default=ListingStatus.DRAFT,

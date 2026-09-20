@@ -2,7 +2,7 @@
 
 这是 Temu 美国跨境数字油画业务的数据库优先基础工程。当前已完成 **STEP 1、Milestone 1、Milestone 1.5**，并完成 **Milestone 2 的商品领域模型、预检报告和真实模板适配器**。工厂报价、包装规则和重量规则均可追溯写入 PostgreSQL；Listing 只从有效报价生成 SKU。
 
-已接入真实 Temu 美国站半托管成人数字画套件模板，并将店小秘固定为唯一商品发布方、方果固定为唯一订单履约和发货回传方。首个商品仍处于预检阶段；缺少的业务事实不会由系统猜测，因此当前不会生成可上传工作簿。尚未实现 Temu API 自动上架、定价/议价、方果自动下单、备货、标签 PDF 或 Finance Dashboard。
+已接入真实 Temu 美国站半托管成人数字画套件模板，并将店小秘固定为唯一商品发布方、方果固定为唯一订单履约和发货回传方。首个商品已通过店小秘人工提交、正在审核；店小秘页面显示的 SPU/SKC/SKU ID 已作为“待 Temu 卖家中心确认”的外部标识录入文件。尚未实现 Temu API 自动上架、定价/议价、方果自动下单、备货、标签 PDF 或 Finance Dashboard。
 
 ## 当前能力
 
@@ -23,6 +23,8 @@
 - Listing 依据尺寸、色数和框型自动解析工厂包装三边、重量、每箱上限及来源哈希
 - Listing pre-flight 校验与 `summary/products/skus/issues` 四表报告
 - 已审核真实 Temu 模板的 83 列映射和 `spu`/`sku` 分层行结构；dry-run 永不生成正式上传文件
+- 同一 SPU 支持“型号（with frame/no frame）+ 尺码”两个 SKU 规格维度；SPU 层框架类型仍要求人工确认，系统不从其中一个 SKU 猜测
+- 店小秘人工发布结果可按店铺同步至 `temu_listings`，分别保存店小秘 SPU、Temu SPU、SKC、SKU ID 和审核状态；默认 dry-run、重复执行幂等
 - 美国 SDS 与欧盟 SDS 分开留档，且美国 SDS 不被误当作 ASTM D-4236 消费品标签证明
 
 ## 快速开始
@@ -91,6 +93,18 @@ python scripts/generate_temu_listing.py \
 
 正式生成前必须配置人工汇率及时间戳，并把 `--dry-run` 改为 `--commit`。Commit 只生成本地 Excel，不调用 Temu API。
 
+店小秘外部 ID 同步同样默认 dry-run。`--store-code` 应使用系统内稳定的店铺编码，而不是店铺展示名称：
+
+```bash
+python scripts/sync_dianxiaomi_listing.py \
+  --intake data/templates/first_product.intake.json \
+  --supplier LINGDIAN \
+  --store-code US_MAIN \
+  --dry-run
+```
+
+预览确认无误后改为 `--commit`。如需准确保留页面观察时间，可传入带时区的 `--observed-at`；未传时使用录入文件的修改时间。店小秘页面上的 SPU ID 不会自动冒充 Temu 卖家中心 SPU，只有录入文件的 `identifiers.temu_spu` 经确认后填写，系统才写入 `temu_spu`。
+
 ## 配置
 
 - `settings.yaml`：非敏感默认值，包括毛利阈值、币种、导入缺失标记和目录。
@@ -109,7 +123,7 @@ python scripts/generate_temu_listing.py \
 - `products`：SPU 级内部商品，与一个图案关联。
 - `skus`：尺寸、色数、带框状态组成的可生产变体；保存 Factory SKU 和 Temu SKU。
 - `factory_costs`：按供应商、规格、带框状态和生效日版本化的成本记录。
-- `temu_listings`：店铺维度的 Temu SPU、Goods ID 与上架状态。
+- `temu_listings`：店铺维度的店小秘 SPU、Temu SPU/SKC/SKU、Goods ID、平台审核状态与观察来源。
 - `pricing_quotes`：Temu 原始核价记录。
 - `pricing_decisions`：成本、毛利、规则、决定、dry-run 和执行结果的不可丢失快照。
 - `stock_orders`：Temu 备货单头、状态和最终供应商文件路径。
@@ -131,9 +145,9 @@ python scripts/generate_temu_listing.py \
 
 - 所有表使用 UUID `id` 作为内部主键，避免业务编码变化破坏引用。
 - `designs.design_code`：例如 `DESIGN-CAT-000001`，全局唯一。
-- `skus.factory_sku`：在同一供应商内唯一。
-- `skus.temu_sku`：V1 单店范围内唯一，可为空直到 Temu 分配。
-- `temu_listings.temu_goods_id`、`temu_spu`：以 `store_code` 为作用域。
+- `skus.factory_sku`：内部统一 SKU 货号，在同一供应商内唯一；店小秘、方果均通过映射引用它。
+- `temu_listings.dianxiaomi_spu_id`：店小秘界面生成的 SPU ID，不等同于已确认的 Temu SPU。
+- `temu_listings.temu_spu`、`temu_skc_id`、`temu_sku_id`、`temu_goods_id`：均以 `store_code` 为作用域；未确认值允许为空。
 - `stock_orders.stock_order_code`、`shipments.shipment_code`：外部业务单号，唯一。
 - 导入行绝不通过商品名称匹配。商品链路使用 Design ID、Factory SKU、Temu SKU 和数据库外键。
 
@@ -182,4 +196,4 @@ tests/                   单元测试与可选 PostgreSQL 集成测试
 
 ## 当前阻塞与下一步
 
-真实 Temu 模板、字段映射、美国 SDS、包装说明和重量表已经接入。首个商品生成正式 `temu_batch_listing.xlsx` 前仍需：工厂图案编码；每个 SKU 的色数与框型确认；申报价格和领典仓库存；合规尺寸且已上传素材中心的图片 ID/URL；图案/图片商用权；当前颜料与美国 SDS 的书面对应；ASTM D-4236 毒理审核及最终包装标签证据；方果同码线稿与说明书文件；带时间戳的人工 USD/CNY 汇率。补齐后先运行 dry-run，预检无 ERROR 才允许 commit。下一阶段仍需单独确认后才能进入方果订单、备货、标签、Pricing Engine 或 Temu API。
+真实 Temu 模板、字段映射、美国 SDS、包装说明和重量表已经接入。首个商品的工厂图案编码 `LD000001`、24 色和四个变体已经确认并人工提交审核。系统侧仍缺少：本次实际选择的 SPU 框架类型属性；每个 SKU 的最终申报价格和库存快照；可供自动化调用的店小秘素材引用；图案/图片商用权；当前颜料与美国 SDS 的书面对应；ASTM D-4236 毒理审核及最终包装标签证据；方果同码线稿与说明书文件；带时间戳的人工 USD/CNY 汇率；Temu 审核结果及卖家中心 ID 复核。后续自动生成商品时先运行 dry-run，预检无 ERROR 才允许 commit。方果订单自动化、备货、正式标签、Pricing Engine 和 Temu API 仍属于后续里程碑。

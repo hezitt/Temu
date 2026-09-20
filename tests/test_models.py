@@ -49,3 +49,19 @@ def test_product_has_one_to_one_design_constraint() -> None:
         if constraint.name
     }
     assert "uq_products_design_id" in constraints
+
+
+def test_temu_listing_tracks_store_scoped_external_identifiers() -> None:
+    table = Base.metadata.tables["temu_listings"]
+    assert {
+        "dianxiaomi_spu_id",
+        "temu_spu",
+        "temu_skc_id",
+        "temu_sku_id",
+        "platform_review_status",
+        "platform_lifecycle_status",
+        "external_id_source",
+        "external_id_observed_at",
+    } <= set(table.c.keys())
+    constraints = {constraint.name for constraint in table.constraints if constraint.name}
+    assert "uq_temu_listings_store_temu_sku_id" in constraints

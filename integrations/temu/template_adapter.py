@@ -225,10 +225,20 @@ class TemuExcelTemplateAdapter:
                 "MIXED_SPU_PAINT_COUNTS",
                 "颜料色数是 SPU 属性；不同色数必须拆成不同 SPU",
             )
-        if len(frames) > 1:
+        if len(frames) > 1 and product.spu_frame_type is None:
             add(
-                "MIXED_SPU_FRAME_TYPES",
-                "框架类型是 SPU 属性；有框和无框必须拆成不同 SPU",
+                "MISSING_SPU_FRAME_TYPE_ATTRIBUTE",
+                "有框和无框可以作为“型号”规格共用一个 SPU，但仍需明确填写 SPU 的框架类型属性",
+            )
+        expected_frame = None
+        if product.spu_frame_type == "无框":
+            expected_frame = False
+        elif product.spu_frame_type == "有框":
+            expected_frame = True
+        if len(frames) == 1 and expected_frame is not None and frames != {expected_frame}:
+            add(
+                "SPU_FRAME_TYPE_ATTRIBUTE_CONFLICT",
+                "SPU 框架类型属性与全部 SKU 的有框/无框状态不一致",
             )
         if "膏体" not in product.sensitive_attributes:
             add(

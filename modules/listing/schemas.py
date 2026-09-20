@@ -6,6 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from modules.costing.schemas import FactoryCostMatch, ShippingCostEstimate, UnitCostBreakdown
 
+type SPUFrameType = Literal["半无框", "全框", "无框", "有框", "包裹式画布框架"]
+
 
 class VariantInput(BaseModel):
     width_cm: Decimal = Field(gt=0)
@@ -38,6 +40,7 @@ class DesignInput(BaseModel):
     origin_province: str | None = "河南省"
     manufacturing_regions: list[str] = Field(default_factory=lambda: ["中国大陆"], max_length=10)
     material: str = "油画布"
+    spu_frame_type: SPUFrameType | None = None
     asset_rights_confirmed: bool = False
     compliance_manifest: Path | None = None
     available_variants: list[VariantInput] = Field(min_length=1)
@@ -104,6 +107,7 @@ class ListingProduct(BaseModel):
     origin_province: str | None = "河南省"
     manufacturing_regions: list[str] = Field(default_factory=list)
     material: str = "油画布"
+    spu_frame_type: SPUFrameType | None = None
     asset_rights_confirmed: bool = False
     compliance_manifest: Path | None = None
     product_type: str
@@ -137,6 +141,7 @@ class CanonicalListingRow(BaseModel):
     origin_province: str | None = None
     manufacturing_regions: list[str] = Field(default_factory=list)
     material: str
+    spu_frame_type: SPUFrameType | None = None
     sku: str
     width_cm: Decimal
     height_cm: Decimal
