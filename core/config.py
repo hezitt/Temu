@@ -3,7 +3,7 @@ from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, SecretStr, model_validator
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -85,6 +85,21 @@ class ListingSettings(BaseModel):
     require_existing_main_image: bool = True
 
 
+class FangguoSettings(BaseModel):
+    base_url: str = "https://open.fangguo.com/fgapp/openapi"
+    api_key: SecretStr | None = None
+    request_timeout_seconds: float = Field(default=20.0, gt=0, le=120)
+    max_attempts: int = Field(default=3, ge=1, le=5)
+    platform_type: int = 225
+    page_size: int = Field(default=100, ge=1, le=100)
+    rolling_lookback_minutes: int = Field(default=180, ge=5, le=1440)
+
+    @model_validator(mode="after")
+    def normalize_base_url(self) -> "FangguoSettings":
+        self.base_url = self.base_url.rstrip("/")
+        return self
+
+
 class PathSettings(BaseModel):
     raw_data_dir: Path = Path("data/raw")
     processed_data_dir: Path = Path("data/processed")
@@ -109,6 +124,7 @@ class Settings(BaseSettings):
     factory_quotes: FactoryQuoteSettings = Field(default_factory=FactoryQuoteSettings)
     costing: CostingSettings = Field(default_factory=CostingSettings)
     listing: ListingSettings = Field(default_factory=ListingSettings)
+    fangguo: FangguoSettings = Field(default_factory=FangguoSettings)
     supplier_profiles: dict[str, SupplierProfile] = Field(default_factory=dict)
     reports: ReportSettings = Field(default_factory=ReportSettings)
     paths: PathSettings = Field(default_factory=PathSettings)

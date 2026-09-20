@@ -39,6 +39,14 @@ listing:
   target_market: US
   require_existing_main_image: true
 
+fangguo:
+  base_url: https://open.fangguo.com/fgapp/openapi
+  request_timeout_seconds: 20
+  max_attempts: 3
+  platform_type: 225
+  page_size: 100
+  rolling_lookback_minutes: 180
+
 supplier_profiles:
   LINGDIAN:
     name: 领典

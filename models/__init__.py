@@ -17,6 +17,7 @@ from models.listing_submission import ListingSubmission
 from models.platform_asset import PlatformAsset
 from models.pricing import PricingDecision, PricingQuote, PricingRuleSet
 from models.product import Product
+from models.sales_order import FulfillmentOrder, SalesOrder, SalesOrderItem, SalesOrderShipment
 from models.shipment import Shipment
 from models.sku import SKU
 from models.stock_order import StockOrder, StockOrderItem
@@ -31,6 +32,7 @@ __all__ = [
     "FactoryCost",
     "FactoryQuoteRow",
     "FinancialTransaction",
+    "FulfillmentOrder",
     "ImportBatch",
     "IntegrationConnection",
     "IntegrationRun",
@@ -46,6 +48,9 @@ __all__ = [
     "ProductWeightRule",
     "Product",
     "SKU",
+    "SalesOrder",
+    "SalesOrderItem",
+    "SalesOrderShipment",
     "Shipment",
     "StockOrder",
     "StockOrderItem",

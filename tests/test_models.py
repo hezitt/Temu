@@ -23,6 +23,10 @@ REQUIRED_TABLES = {
     "platform_events",
     "platform_assets",
     "listing_submissions",
+    "sales_orders",
+    "sales_order_items",
+    "fulfillment_orders",
+    "sales_order_shipments",
 }
 
 
@@ -93,3 +97,17 @@ def test_platform_events_are_deduplicated_per_connection() -> None:
         if constraint.name
     }
     assert "uq_platform_events_connection_external_event" in constraints
+
+
+def test_sales_orders_are_deduplicated_and_items_are_sku_matchable() -> None:
+    order_constraints = {
+        constraint.name
+        for constraint in Base.metadata.tables["sales_orders"].constraints
+        if constraint.name
+    }
+    assert "uq_sales_orders_connection_external_order" in order_constraints
+
+    item_table = Base.metadata.tables["sales_order_items"]
+    assert {"sku_id", "temu_listing_id", "external_sku_id", "seller_sku", "mapped_sku"} <= set(
+        item_table.c.keys()
+    )

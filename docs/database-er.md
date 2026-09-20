@@ -14,6 +14,14 @@ erDiagram
     INTEGRATION_CONNECTIONS ||--o{ PLATFORM_EVENTS : receives
     INTEGRATION_CONNECTIONS ||--o{ PLATFORM_ASSETS : uploads
     INTEGRATION_CONNECTIONS ||--o{ LISTING_SUBMISSIONS : publishes
+    STORES ||--o{ SALES_ORDERS : receives
+    INTEGRATION_CONNECTIONS ||--o{ SALES_ORDERS : imports
+    SALES_ORDERS ||--|{ SALES_ORDER_ITEMS : contains
+    SALES_ORDERS ||--o| FULFILLMENT_ORDERS : fulfilled_as
+    SALES_ORDERS ||--o{ SALES_ORDER_SHIPMENTS : ships_as
+    SALES_ORDER_ITEMS o|--o{ SALES_ORDER_SHIPMENTS : identifies
+    SKUS o|--o{ SALES_ORDER_ITEMS : matches
+    TEMU_LISTINGS o|--o{ SALES_ORDER_ITEMS : identifies
 
     DESIGNS ||--o| PRODUCTS : defines
     PRODUCTS ||--o{ SKUS : contains
@@ -113,3 +121,11 @@ Design.design_code
 - `integration_runs.idempotency_key` 和 `listing_submissions.idempotency_key` 全局唯一，防止重试造成重复发布或重复写入。
 - `platform_events` 按连接和外部事件 ID 唯一；只有处理成功后才能推进对应同步游标。
 - 请求与响应快照写库前必须移除凭据、收件人联系方式等敏感字段。
+
+## 方果消费者订单边界
+
+- `sales_orders` 与备货业务使用的 `stock_orders` 是两个独立领域，禁止混用。
+- 方果 TID 列表只能按支付时间筛选；同步游标保存查询窗口结束时间，并通过滚动回看和数据库唯一约束处理后续状态变化。
+- 商品匹配要求系统货号或店铺范围内 Temu SKU ID 精确对应；多个候选指向不同 SKU 时不自动选择。
+- 方果详情中的买家留言、收件信息、定制图片和其他非必要字段不写入数据库。
+- 当前接口层只读，不提供手工单新增、推送、取消、修改或运单导入能力。

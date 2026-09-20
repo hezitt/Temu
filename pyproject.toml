@@ -35,6 +35,7 @@ select = ["E", "F", "I", "UP", "B"]
 "scripts/import_fulfillment_rules.py" = ["E402"]
 "scripts/sync_dianxiaomi_listing.py" = ["E402"]
 "scripts/import_product_intake.py" = ["E402"]
+"scripts/sync_fangguo_orders.py" = ["E402"]
 
 [tool.mypy]
 python_version = "3.12"
