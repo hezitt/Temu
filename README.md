@@ -34,6 +34,7 @@
 - 方果订单列表只支持支付时间筛选，系统保存支付时间水位并采用滚动回看窗口，避免把它误当成更新时间增量
 - `/health/database` 独立检查 PostgreSQL 连接，避免把进程存活误当成数据库健康
 - 美国 SDS 与欧盟 SDS 分开留档，且美国 SDS 不被误当作 ASTM D-4236 消费品标签证明
+- Sorftime Temu 市场数据客户端支持 Base64+gzip 解码、响应缓存、额度账本和默认禁用真实请求
 
 ## 快速开始
 
@@ -134,6 +135,37 @@ python scripts/sync_dianxiaomi_listing.py \
 ```
 
 预览确认无误后改为 `--commit`。如需准确保留页面观察时间，可传入带时区的 `--observed-at`；未传时使用录入文件的修改时间。店小秘页面上的 SPU ID 不会自动冒充 Temu 卖家中心 SPU，只有录入文件的 `identifiers.temu_spu` 经确认后填写，系统才写入 `temu_spu`。
+
+Sorftime Temu 市场数据调用默认只生成计划，不消耗额度：
+
+```bash
+.venv/bin/python -m scripts.sorftime_research \
+  category-search --name "Adult Paint by Number Kits"
+```
+
+确认计划后，需要同时在未跟踪的 `.env` 中填写 `SORFTIME__ACCOUNT_SK`、把
+`SORFTIME__LIVE_REQUESTS_ENABLED` 改为 `true`，并显式加入 `--execute` 才会真实请求：
+
+```bash
+.venv/bin/python -m scripts.sorftime_research --execute \
+  category-search --name "Adult Paint by Number Kits"
+```
+
+已支持 `CategoryTree`、`CategorySearchFromName`、`CategoryRequest`、`ProductRequest`、
+`ProductSearchFromName`、`ProductTrendRequest` 和 `ProductSearch`。解压后的响应与额度账本
+保存在 `data/processed/sorftime/`，相同参数优先读取缓存，不重复消耗额度。
+缓存默认有效24小时；刷新后仍保留按时间命名的原始快照，供后续趋势分析与审计。
+
+Amazon 美国站使用同一 Sorftime 密钥和共享额度账本，但固定使用 `domain=1`。调用同样默认
+只生成零成本计划；下面的命令预计消耗1次，但不会真实执行：
+
+```bash
+.venv/bin/python -m scripts.sorftime_amazon_research \
+  category-search --name "paint by numbers for adults"
+```
+
+Amazon 适配器会动态计算组合历史类目、多 ASIN、长周期趋势和包含子体销量时的真实预计成本，
+防止这些接口以固定成本显示而意外超额。
 
 ## 配置
 

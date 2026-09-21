@@ -100,6 +100,24 @@ class FangguoSettings(BaseModel):
         return self
 
 
+class SorftimeSettings(BaseModel):
+    base_url: str = "https://standardapi.sorftime.com/api"
+    account_sk: SecretStr | None = None
+    domain: int = Field(default=701, description="701=US, 705=Europe")
+    request_timeout_seconds: float = Field(default=120.0, gt=0, le=300)
+    request_budget: int = Field(default=50, ge=0)
+    live_requests_enabled: bool = False
+    cache_dir: Path = Path("data/processed/sorftime")
+    cache_ttl_hours: int = Field(default=24, ge=1, le=720)
+
+    @model_validator(mode="after")
+    def validate_sorftime_settings(self) -> "SorftimeSettings":
+        self.base_url = self.base_url.rstrip("/")
+        if self.domain not in {701, 705}:
+            raise ValueError("sorftime.domain must be 701 (US) or 705 (Europe)")
+        return self
+
+
 class PathSettings(BaseModel):
     raw_data_dir: Path = Path("data/raw")
     processed_data_dir: Path = Path("data/processed")
@@ -125,6 +143,7 @@ class Settings(BaseSettings):
     costing: CostingSettings = Field(default_factory=CostingSettings)
     listing: ListingSettings = Field(default_factory=ListingSettings)
     fangguo: FangguoSettings = Field(default_factory=FangguoSettings)
+    sorftime: SorftimeSettings = Field(default_factory=SorftimeSettings)
     supplier_profiles: dict[str, SupplierProfile] = Field(default_factory=dict)
     reports: ReportSettings = Field(default_factory=ReportSettings)
     paths: PathSettings = Field(default_factory=PathSettings)
